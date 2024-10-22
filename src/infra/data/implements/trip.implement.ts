@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { TripEntity } from '../../../domain/entities/trip.entity';
 
 @Injectable()
 export abstract class TripRepository {
-  abstract createTrip();
+  abstract createTrip(trip: TripEntity): Promise<TripEntity>;
 }

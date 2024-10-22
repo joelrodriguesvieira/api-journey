@@ -4,6 +4,7 @@ import { ExpressAdapter } from '@nestjs/platform-express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, new ExpressAdapter());
+  app.enableCors();
   await app.listen(3000);
 }
 bootstrap();

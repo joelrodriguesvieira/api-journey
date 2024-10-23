@@ -9,9 +9,9 @@ export class TripEntity {
   public endsAt: Date;
   public isConfirmed?: boolean;
   public createdAt?: Date;
-  public ownerName: string;
+  public ownerName?: string;
   public emailsToInvite?: string[];
-  public ownerEmail: string;
+  public ownerEmail?: string;
   public participants?: ParticipantEntity[];
   public activities?: ActivityEntity[];
   public links?: LinkEntity[];

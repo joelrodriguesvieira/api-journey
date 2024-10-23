@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { TripEntity } from '../../../../domain/entities/trip.entity';
-import { TripWithParticipant } from '../../../interfaces/trip.inteface';
+import { TripComplete } from '../../../interfaces/trip.inteface';
 
 @Injectable()
 export class TripMapper {
-  toDomain(data: TripWithParticipant): TripEntity {
+  toDomain(data: TripComplete): TripEntity {
     const tripEntity = new TripEntity({
       id: data.id,
       destination: data.destination,
@@ -19,6 +19,8 @@ export class TripMapper {
         isConfirmed: participant.is_confirmed,
         isOwner: participant.is_owner,
       })),
+      activities: [],
+      links: [],
     });
     return tripEntity;
   }

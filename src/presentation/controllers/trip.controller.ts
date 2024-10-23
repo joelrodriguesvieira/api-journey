@@ -1,8 +1,7 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { TripService } from '../../application/services/trip.service';
 import { CreateTripDTO } from '../../application/DTOs/createTrip.dto';
 import { TripMapperApplication } from '../../application/mappers/trip.mapper';
-import { ParamId } from '../../application/decorators/param-id.decorator';
 
 @Controller('trips')
 export class TripsController {
@@ -12,7 +11,7 @@ export class TripsController {
   ) {}
 
   @Get('/:id')
-  async getUniqueTrip(@ParamId() id: string) {
+  async getUniqueTrip(@Param('id') id: string) {
     return this.tripService.getUniqueTripById(id);
   }
 

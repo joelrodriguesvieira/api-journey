@@ -1,4 +1,4 @@
-export interface TripWithParticipant {
+export interface TripComplete {
   participants: {
     id: string;
     name?: string;
@@ -12,4 +12,14 @@ export interface TripWithParticipant {
   ends_at: Date;
   is_confirmed: boolean;
   created_at: Date;
+  activities: {
+    id: string;
+    title: string;
+    occurs_at: Date;
+  }[];
+  links: {
+    id: string;
+    title: string;
+    url: string;
+  }[];
 }

@@ -20,19 +20,32 @@ export class PrismaTripRepository implements TripRepository {
         ends_at: new Date(data.endsAt).toISOString(),
         is_confirmed: data.isConfirmed,
         participants: {
-          create: data.participants?.map((participant) => ({
+          create: data.participants.map((participant) => ({
             name: participant.name,
             email: participant.email,
             is_confirmed: participant.isConfirmed,
             is_owner: participant.isOwner,
           })),
         },
+        activities: {
+          create: data.activities.map((activity) => ({
+            title: activity.title,
+            occurs_at: new Date(activity.occursAt).toISOString(),
+          })),
+        },
+        links: {
+          create: data.links.map((link) => ({
+            title: link.title,
+            url: link.url,
+          })),
+        },
       },
       include: {
         participants: true,
+        activities: true,
+        links: true,
       },
     });
-    console.log(trip);
     return this.tripMapper.toDomain(trip);
   }
 
@@ -43,6 +56,8 @@ export class PrismaTripRepository implements TripRepository {
       },
       include: {
         participants: true,
+        activities: true,
+        links: true,
       },
     });
 

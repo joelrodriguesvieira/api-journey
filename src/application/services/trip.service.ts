@@ -3,7 +3,9 @@ import { TripEntity } from '../../domain/entities/trip.entity';
 import { ParticipantEntity } from '../../domain/entities/participant.entity';
 import { PrismaTripRepository } from '../../infra/data/prisma/repositories/trip.repository';
 import { ClientError } from '../../presentation/errors/clientError';
-import dayjs from 'dayjs';
+import * as dayjs from 'dayjs';
+import { ActivityEntity } from '../../domain/entities/activity.entity';
+import { LinkEntity } from '../../domain/entities/link.entity';
 
 @Injectable()
 export class TripService {
@@ -17,7 +19,11 @@ export class TripService {
     if (dayjs(tripPayload.endsAt).isBefore(tripPayload.startsAt)) {
       throw new ClientError('Invalid trip end date.');
     }
+
+    const activities: ActivityEntity[] = [];
+    const links: LinkEntity[] = [];
     let participants: ParticipantEntity[] = [];
+
     participants = tripPayload.emailsToInvite.map((emailToInvite) => ({
       email: emailToInvite,
       isConfirmed: tripPayload.ownerEmail === emailToInvite ? true : false,
@@ -26,11 +32,17 @@ export class TripService {
     const owner: ParticipantEntity = {
       name: tripPayload.ownerName,
       email: tripPayload.ownerEmail,
-      isConfirmed: false,
+      isConfirmed: true,
       isOwner: true,
     };
     participants.push(owner);
-    const trip = { ...tripPayload, participants, isConfirmed: false };
+    const trip = {
+      ...tripPayload,
+      participants,
+      isConfirmed: false,
+      activities,
+      links,
+    };
     return this.tripRepository.createTrip(trip);
   }
 

@@ -1,4 +1,10 @@
 export interface TripComplete {
+  id: string;
+  destination: string;
+  starts_at: Date;
+  ends_at: Date;
+  is_confirmed: boolean;
+  created_at: Date;
   participants: {
     id: string;
     name?: string;
@@ -6,12 +12,6 @@ export interface TripComplete {
     is_confirmed: boolean;
     is_owner: boolean;
   }[];
-  id: string;
-  destination: string;
-  starts_at: Date;
-  ends_at: Date;
-  is_confirmed: boolean;
-  created_at: Date;
   activities: {
     id: string;
     title: string;

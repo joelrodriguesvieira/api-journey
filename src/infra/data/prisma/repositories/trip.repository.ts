@@ -66,4 +66,28 @@ export class PrismaTripRepository implements TripRepository {
     }
     return this.tripMapper.toDomain(trip);
   }
+
+  async updateTrip(trip: TripEntity): Promise<TripEntity> {
+    try {
+      const updateTrip = await this.prisma.trip.update({
+        where: {
+          id: trip.id,
+        },
+        data: {
+          destination: trip.destination,
+          starts_at: trip.startsAt,
+          ends_at: trip.endsAt,
+        },
+        include: {
+          participants: true,
+          activities: true,
+          links: true,
+        },
+      });
+      return this.tripMapper.toDomain(updateTrip);
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
 }

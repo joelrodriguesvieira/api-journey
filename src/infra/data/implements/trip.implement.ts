@@ -4,5 +4,6 @@ import { TripEntity } from '../../../domain/entities/trip.entity';
 @Injectable()
 export abstract class TripRepository {
   abstract createTrip(trip: TripEntity): Promise<TripEntity>;
-  abstract getUniqueTripById(tripId: string);
+  abstract getUniqueTripById(tripId: string): Promise<TripEntity>;
+  abstract updateTrip(trip: TripEntity): Promise<TripEntity>;
 }

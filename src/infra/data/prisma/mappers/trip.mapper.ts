@@ -19,8 +19,16 @@ export class TripMapper {
         isConfirmed: participant.is_confirmed,
         isOwner: participant.is_owner,
       })),
-      activities: [],
-      links: [],
+      activities: data.activities?.map((activity) => ({
+        id: activity.id,
+        title: activity.title,
+        occursAt: activity.occurs_at,
+      })),
+      links: data.links?.map((link) => ({
+        id: link.id,
+        title: link.title,
+        url: link.url,
+      })),
     });
     return tripEntity;
   }

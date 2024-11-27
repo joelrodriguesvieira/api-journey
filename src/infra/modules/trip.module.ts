@@ -5,6 +5,7 @@ import { TripService } from '../../application/services/trip.service';
 import { PrismaTripRepository } from '../data/prisma/repositories/trip.repository';
 import { TripMapper } from '../data/prisma/mappers/trip.mapper';
 import { TripMapperApplication } from '../../application/mappers/trip.mapper';
+import { ActivtyMapper } from '../data/prisma/mappers/activity.mapper';
 
 @Module({
   imports: [PrismaModule],
@@ -14,6 +15,7 @@ import { TripMapperApplication } from '../../application/mappers/trip.mapper';
     TripService,
     TripMapper,
     TripMapperApplication,
+    ActivtyMapper,
   ],
   exports: [PrismaTripRepository],
 })

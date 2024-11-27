@@ -7,6 +7,7 @@ import * as dayjs from 'dayjs';
 import { ActivityEntity } from '../../domain/entities/activity.entity';
 import { LinkEntity } from '../../domain/entities/link.entity';
 import { UpdateTripDTO } from '../DTOs/updateTrip.dto';
+import { CreateActivityDTO } from '../DTOs/createActivity.dto';
 
 @Injectable()
 export class TripService {
@@ -53,19 +54,27 @@ export class TripService {
     return trip;
   }
 
+  validateDate(date: Date, optionalDate?: Date) {
+    if (dayjs(date).isBefore(new Date())) {
+      throw new ClientError('Invalid start date.');
+    }
+
+    if (optionalDate) {
+      if (dayjs(optionalDate).isBefore(date)) {
+        throw new ClientError('Invalid end date.');
+      }
+    }
+    return true;
+  }
+
   async updateTrip(tripId: string, tripData: UpdateTripDTO) {
     const trip = await this.tripRepository.getUniqueTripById(tripId);
 
     if (!trip) {
       throw new BadRequestException(this.notFoundTripMessage);
     }
-
-    if (dayjs(tripData.startsAt).isBefore(new Date())) {
-      throw new ClientError('Invalid trip start date.');
-    }
-
-    if (dayjs(tripData.endsAt).isBefore(tripData.startsAt)) {
-      throw new ClientError('Invalid trip end date.');
+    if (!this.validateDate(tripData.startsAt, tripData.endsAt)) {
+      throw new BadRequestException('Invalid date');
     }
 
     const updatedTrip = {
@@ -76,5 +85,41 @@ export class TripService {
     };
 
     return this.tripRepository.updateTrip(updatedTrip);
+  }
+
+  async createActivity(tripId: string, activityData: CreateActivityDTO) {
+    const trip = await this.tripRepository.getUniqueTripById(tripId);
+
+    if (!trip) {
+      throw new BadRequestException(this.notFoundTripMessage);
+    }
+    if (!this.validateDate(activityData.occurs_at)) {
+      throw new BadRequestException('Invalid date');
+    }
+
+    if (
+      activityData.occurs_at < trip.startsAt ||
+      activityData.occurs_at > trip.endsAt
+    ) {
+      throw new BadRequestException(
+        'This date cannot be set because it is not in the travel range',
+      );
+    }
+
+    const activity: ActivityEntity = {
+      title: activityData.title,
+      occursAt: activityData.occurs_at,
+    };
+    return this.tripRepository.createActivity(tripId, activity);
+  }
+
+  async findActivities(tripId: string) {
+    const trip = await this.tripRepository.getUniqueTripById(tripId);
+
+    if (!trip) {
+      throw new BadRequestException(this.notFoundTripMessage);
+    }
+
+    const activities = await this.tripRepository.findActivities(tripId);
   }
 }

@@ -3,6 +3,7 @@ import { TripService } from '../../application/services/trip.service';
 import { CreateTripDTO } from '../../application/DTOs/createTrip.dto';
 import { TripMapperApplication } from '../../application/mappers/trip.mapper';
 import { UpdateTripDTO } from '../../application/DTOs/updateTrip.dto';
+import { CreateActivityDTO } from '../../application/DTOs/createActivity.dto';
 
 @Controller('trips')
 export class TripsController {
@@ -16,10 +17,23 @@ export class TripsController {
     return this.tripService.getUniqueTripById(id);
   }
 
+  @Get('/:idTrip/activities')
+  async getActivities(@Param('idTrip') id: string) {
+    const activities = this.tripService.findActivities(id);
+  }
+
   @Post()
   async createTrip(@Body() payload: CreateTripDTO) {
     const tripEntity = this.tripMapper.toDomain(payload);
     return this.tripService.createTrip(tripEntity);
+  }
+
+  @Post('/:idTrip/activities')
+  async createActivity(
+    @Param('idTrip') id: string,
+    @Body() payload: CreateActivityDTO,
+  ) {
+    return this.tripService.createActivity(id, payload);
   }
 
   @Put('/:id')

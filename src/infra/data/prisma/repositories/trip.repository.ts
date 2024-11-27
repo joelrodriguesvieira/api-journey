@@ -4,12 +4,15 @@ import { TripEntity } from '../../../../domain/entities/trip.entity';
 import { PrismaService } from '../../../clients/prisma.service';
 import { TripMapper } from '../mappers/trip.mapper';
 import { ClientError } from '../../../../presentation/errors/clientError';
+import { ActivityEntity } from '../../../../domain/entities/activity.entity';
+import { ActivtyMapper } from '../mappers/activity.mapper';
 
 @Injectable()
 export class PrismaTripRepository implements TripRepository {
   constructor(
     private readonly prisma: PrismaService,
     private readonly tripMapper: TripMapper,
+    private readonly activityMapper: ActivtyMapper,
   ) {}
 
   async createTrip(data: TripEntity): Promise<TripEntity> {
@@ -89,5 +92,33 @@ export class PrismaTripRepository implements TripRepository {
       console.log(error);
       return null;
     }
+  }
+
+  async createActivity(tripId: string, data: ActivityEntity) {
+    const trip = await this.prisma.trip.findUnique({
+      where: {
+        id: tripId,
+      },
+      include: {
+        participants: true,
+        activities: true,
+        links: true,
+      },
+    });
+
+    if (!trip) {
+      throw new ClientError('Trip not found');
+    }
+    const activity = await this.prisma.activity.create({
+      data: {
+        title: data.title,
+        occurs_at: new Date(data.occursAt),
+        trip_id: trip.id,
+      },
+      include: {
+        trip: true,
+      },
+    });
+    return this.activityMapper.toDomain(activity);
   }
 }
